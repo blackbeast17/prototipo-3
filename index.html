@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>prototipo 3</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════
+       TOPBAR
+  ══════════════════════════ -->
+  <header class="topbar">
+
+    <div class="topbar-logo"></div>
+    
+
+    <div class="topbar-filters">
+
+      <div class="tf-group">
+        <label class="tf-label" for="select-localidad">Localidad</label>
+        <div class="tf-wrap">
+          <i class="ti ti-map-pin tf-icon"></i>
+          <select class="tf-select" id="select-localidad">
+            <option value="">Todas las localidades</option>
+            <option value="1">Usaquén</option>
+            <option value="2">Chapinero</option>
+            <option value="3">Santa Fe</option>
+         
+          </select>
+        </div>
+      </div>
+
+      <div class="tf-sep"></div>
+
+      <div class="tf-group">
+        <label class="tf-label" for="select-ied">Institución</label>
+        <div class="tf-wrap">
+          <i class="ti ti-building-community tf-icon"></i>
+          <select class="tf-select" id="select-ied" disabled>
+            <option value="">Selecciona una localidad</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="tf-sep"></div>
+
+      <div class="tf-group tf-search-group">
+        <label class="tf-label" for="search-input">Buscar</label>
+        <div class="tf-wrap search-wrap">
+          <i class="ti ti-search tf-icon"></i>
+          <input type="text" class="tf-input" id="search-input"
+            placeholder="Nombre del colegio..." autocomplete="off" />
+          <button class="search-clear" id="search-clear" aria-label="Limpiar">
+            <i class="ti ti-x"></i>
+          </button>
+          <ul class="search-dropdown" id="search-dropdown"></ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Chips -->
+    <div class="topbar-chips" id="active-filters" style="display:none;">
+      <span class="chip" id="chip-localidad" style="display:none;">
+        <span id="chip-localidad-text"></span>
+        <button id="chip-localidad-remove"><i class="ti ti-x"></i></button>
+      </span>
+      <span class="chip" id="chip-ied" style="display:none;">
+        <span id="chip-ied-text"></span>
+        <button id="chip-ied-remove"><i class="ti ti-x"></i></button>
+      </span>
+      <button class="clear-all" id="clear-all">Limpiar</button>
+    </div>
+
+  </header>
+
+  <!-- ══════════════════════════
+       LAYOUT PRINCIPAL
+  ══════════════════════════ -->
+  <div class="main-layout">
+
+    <!-- ── COLUMNA IZQUIERDA — Ficha institución ── -->
+    <aside class="col-left">
+
+      <!-- Estado vacío -->
+      <div class="left-empty" id="left-empty">
+        <div class="empty-icon ph-box" style="width:64px;height:64px;--ph-angle:45deg;border-radius:12px;"></div>
+        <h3>Sin institución seleccionada</h3>
+        <p>Usa los filtros de arriba para explorar por localidad o busca directamente por nombre.</p>
+        <!-- Mini mapa siempre visible -->
+        <div class="mini-map">
+          <p class="col-label">Mapa de Bogotá</p>
+          <div class="ph-box map-ph">
+            <span>Mapa interactivo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ficha IED (aparece al seleccionar) -->
+      <div class="left-ficha" id="left-ficha">
+
+        <!-- Hero foto institución -->
+        <div class="ficha-hero ph-box">
+          <span>Imagen institución</span>
+        </div>
+
+        <!-- Nombre e identificación -->
+        <div class="ficha-id">
+          <p class="ficha-nombre" id="ficha-nombre">—</p>
+          <span class="ficha-badge" id="ficha-localidad-badge">—</span>
+        </div>
+
+        <!-- Datos clave -->
+        <div class="ficha-datos-block">
+          <p class="col-label">Datos generales</p>
+          <div class="ficha-rows">
+            <div class="ficha-row"><span>xxxxxxx </span><span id="f-cod">—</span></div>
+            <div class="ficha-row"><span>xxxxxxx</span><span id="f-loc">—</span></div>
+            <div class="ficha-row"><span>xxxxxxx</span><span id="f-jor">—</span></div>
+            <div class="ficha-row"><span>xxxxxxx</span><span id="f-niv">—</span></div>
+            <div class="ficha-row"><span>xxxxxxx</span><span id="f-rec">—</span></div>
+            <div class="ficha-row"><span>xxxxxxx</span><span id="f-dir">—</span></div>
+          </div>
+        </div>
+
+        <!-- Mapa debajo de la ficha -->
+        <div class="mini-map">
+          <p class="col-label">Ubicación</p>
+          <div class="ph-box map-ph">
+            <span>Mapa / ubicación</span>
+          </div>
+        </div>
+
+      
+
+      </div>
+
+    </aside>
+
+    <!-- ── COLUMNA DERECHA — Filtros + contenido ── -->
+    <main class="col-right">
+
+      <!-- Botonera de filtros -->
+      <nav class="filter-tabs" role="tablist" aria-label="Secciones de información">
+
+        <button class="ftab active" data-tab="ied" role="tab" aria-selected="true">
+          <div class="ftab-icon ph-box" style="--ph-angle:45deg;"></div>
+          <span>Institución</span>
+        </button>
+
+        <button class="ftab" data-tab="estudiantes" role="tab">
+          <div class="ftab-icon ph-box" style="--ph-angle:45deg;"></div>
+          <span>Estudiantes</span>
+        </button>
+
+        <button class="ftab" data-tab="docentes" role="tab">
+          <div class="ftab-icon ph-box" style="--ph-angle:45deg;"></div>
+          <span>Filtro 3</span>
+        </button>
+
+        <button class="ftab" data-tab="reto1" role="tab">
+          <div class="ftab-icon ph-box" style="--ph-angle:45deg;"></div>
+          <span>Filtro 4</span>
+        </button>
+
+        <button class="ftab" data-tab="reto2" role="tab">
+          <div class="ftab-icon ph-box" style="--ph-angle:45deg;"></div>
+          <span>Filtro 5</span>
+        </button>
+
+        <button class="ftab" data-tab="reto3" role="tab">
+          <div class="ftab-icon ph-box" style="--ph-angle:45deg;"></div>
+          <span>Filtro 6</span>
+        </button>
+
+        <button class="ftab" data-tab="ciclo" role="tab">
+          <div class="ftab-icon ph-box" style="--ph-angle:45deg;"></div>
+          <span>Filtro 7</span>
+        </button>
+
+        <button class="ftab" data-tab="proyecto" role="tab">
+          <div class="ftab-icon ph-box" style="--ph-angle:45deg;"></div>
+          <span>Filtro 8</span>
+        </button>
+
+        <button class="ftab" data-tab="extra1" role="tab">
+          <div class="ftab-icon ph-box" style="--ph-angle:45deg;"></div>
+          <span>Filtro 9</span>
+        </button>
+
+      </nav>
+
+      <!-- Contenido del tab activo -->
+      <div class="tab-content">
+
+        <div class="tab-panel active" id="tab-ied" role="tabpanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Institución educativa</h2>
+            <p class="panel-sub">Descripción del filtro 3</p>
+          </div>
+          <div class="ph-row">
+            <div class="ph-box ph-tall" style="flex:2;"><span>Mapa / foto institución</span></div>
+            <div class="ph-col">
+              <div class="ph-box"><span>Datos generales</span></div>
+              <div class="ph-box"><span>Indicadores clave</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-estudiantes" role="tabpanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Estudiantes</h2>
+            <p class="panel-sub">Descripción del filtro 3</p>
+          </div>
+          <div class="ph-col">
+            <div class="ph-box ph-tall"><span>Estudiantes</span></div>
+            <div class="ph-box"><span>Descripción del filtro 2</span></div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-docentes" role="tabpanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Filtro 3</h2>
+            <p class="panel-sub">Descripción del filtro 3</p>
+          </div>
+          <div class="ph-row">
+            <div class="ph-box ph-tall" style="flex:2;"><span>Contenido principal</span></div>
+            <div class="ph-box ph-tall"><span>Panel lateral</span></div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-reto1" role="tabpanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Filtro 4</h2>
+            <p class="panel-sub">Descripción del filtro 4</p>
+          </div>
+          <div class="ph-box ph-full"><span>Filtro 4</span></div>
+        </div>
+
+        <div class="tab-panel" id="tab-reto2" role="tabpanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Filtro 5</h2>
+            <p class="panel-sub">Descripción del filtro 5</p>
+          </div>
+          <div class="ph-box ph-full"><span>Filtro 5</span></div>
+        </div>
+
+        <div class="tab-panel" id="tab-reto3" role="tabpanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Filtro 6</h2>
+            <p class="panel-sub">Descripción del filtro 6</p>
+          </div>
+          <div class="ph-box ph-full"><span>Filtro 6</span></div>
+        </div>
+
+        <div class="tab-panel" id="tab-ciclo" role="tabpanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Filtro 7</h2>
+            <p class="panel-sub">Descripción del filtro 7</p>
+          </div>
+          <div class="ph-box ph-full"><span>Filtro 7</span></div>
+        </div>
+
+        <div class="tab-panel" id="tab-proyecto" role="tabpanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Filtro 8</h2>
+            <p class="panel-sub">Descripción del filtro 8</p>
+          </div>
+          <div class="ph-box ph-full"><span>Filtro 8</span></div>
+        </div>
+
+        <div class="tab-panel" id="tab-extra1" role="tabpanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Filtro 9</h2>
+            <p class="panel-sub">Descripción del filtro 9</p>
+          </div>
+          <div class="ph-box ph-full"><span>Filtro 9</span></div>
+        </div>
+
+      </div><!-- /tab-content -->
+
+    </main>
+
+  </div><!-- /main-layout -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+const IED_POR_LOCALIDAD = {
+  "1": ["Colegio Agustín Fernández (IED)","Colegio Antonio Villavicencio (IED)","Colegio Toberín (IED)"],
+  "2": ["Colegio Liceo Nacional Agustín Nieto Caballero (IED)","Colegio Palermo (IED)"],
+  "3": ["Colegio Externado Nacional Camilo Torres (IED)","Colegio República de Colombia (IED)"],
+  "4": ["Colegio Abel Rodriguez Cespedes (IED)","Colegio Aldemar Rojas Plazas (IED)","Colegio Entre Nubes Sur Oriental (IED)"],
+  "5": ["Colegio Alfonso López Michelsen (IED)","Colegio Brazuelos (IED)","Colegio Carlos Arturo Torres (IED)"],
+  "7": ["Colegio Carlos Pizarro Leongómez (IED)","Colegio El Porvenir (IED)","Colegio Llano Oriental (IED)"],
+  "8": ["Colegio Américas (IED)","Colegio Fernando Mazuera Villegas (IED)","Colegio Rodrigo Lara Bonilla (IED)"],
+  "10":["Colegio Bolivia (IED)","Colegio Gerardo Paredes (IED)","Colegio Tabora (IED)"],
+  "11":["Colegio Chuniza (IED)","Colegio La Gaitana (IED)","Colegio Tibabuyes Universal (IED)"],
+  "19":["Colegio Arborizadora Alta (IED)","Colegio Juan de la Cruz Varela (IED)","Colegio Mochuelo Alto (IED)"]
+};
+
+const LOC_NOMBRES = {
+  "1":"Usaquén","2":"Chapinero","3":"Santa Fe","4":"San Cristóbal",
+  "5":"Usme","6":"Tunjuelito","7":"Bosa","8":"Kennedy","9":"Fontibón",
+  "10":"Engativá","11":"Suba","12":"Barrios Unidos","13":"Teusaquillo",
+  "14":"Los Mártires","15":"Antonio Nariño","16":"Puente Aranda",
+  "17":"La Candelaria","18":"Rafael Uribe Uribe","19":"Ciudad Bolívar","20":"Sumapaz"
+};
+
+// ── DOM ──
+const selLoc      = document.getElementById('select-localidad');
+const selIed      = document.getElementById('select-ied');
+const searchInput = document.getElementById('search-input');
+const searchClear = document.getElementById('search-clear');
+const dropdown    = document.getElementById('search-dropdown');
+const activeFilts = document.getElementById('active-filters');
+const chipLoc     = document.getElementById('chip-localidad');
+const chipLocTxt  = document.getElementById('chip-localidad-text');
+const chipLocRm   = document.getElementById('chip-localidad-remove');
+const chipIed     = document.getElementById('chip-ied');
+const chipIedTxt  = document.getElementById('chip-ied-text');
+const chipIedRm   = document.getElementById('chip-ied-remove');
+const clearAllBtn = document.getElementById('clear-all');
+const leftEmpty   = document.getElementById('left-empty');
+const leftFicha   = document.getElementById('left-ficha');
+
+// ── Tabs ──
+document.querySelectorAll('.ftab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    // Desactivar todos
+    document.querySelectorAll('.ftab').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    // Activar el clickeado
+    this.classList.add('active');
+    this.setAttribute('aria-selected', 'true');
+    const panel = document.getElementById('tab-' + this.dataset.tab);
+    if (panel) {
+      panel.classList.add('active');
+      panel.classList.add('panel-enter');
+      setTimeout(() => panel.classList.remove('panel-enter'), 250);
+    }
+  });
+});
+
+// ── Ficha IED ──
+function mostrarFichaIED(nombre, locId) {
+  leftEmpty.style.display = 'none';
+  leftFicha.style.display = 'flex';
+  document.getElementById('ficha-nombre').textContent          = nombre;
+  document.getElementById('ficha-localidad-badge').textContent = LOC_NOMBRES[locId] || '—';
+  document.getElementById('f-cod').textContent = 'xxxxxx';
+  document.getElementById('f-loc').textContent = LOC_NOMBRES[locId] || '—';
+  document.getElementById('f-jor').textContent = 'xxxxxx';
+  document.getElementById('f-niv').textContent = 'xxxxxx';
+  document.getElementById('f-rec').textContent = 'xxxxxx';
+  document.getElementById('f-dir').textContent = 'xxxxxx';
+}
+function ocultarFichaIED() {
+  leftEmpty.style.display = 'flex';
+  leftFicha.style.display = 'none';
+}
+
+// ── Chips ──
+function actualizarChips() {
+  const lv = selLoc.value;
+  const lt = selLoc.options[selLoc.selectedIndex]?.text || '';
+  const iv = selIed.value;
+  const it = selIed.options[selIed.selectedIndex]?.text || '';
+  chipLocTxt.textContent = lt;
+  chipLoc.style.display  = lv ? 'inline-flex' : 'none';
+  chipIedTxt.textContent = it;
+  chipIed.style.display  = iv ? 'inline-flex' : 'none';
+  activeFilts.style.display = (lv || iv) ? 'flex' : 'none';
+}
+
+// ── Localidad ──
+selLoc.addEventListener('change', function() {
+  const val  = this.value;
+  const ieds = IED_POR_LOCALIDAD[val] || [];
+  selIed.innerHTML = '';
+  if (!val) {
+    selIed.innerHTML = '<option value="">Selecciona una localidad</option>';
+    selIed.disabled  = true;
+    ocultarFichaIED();
+  } else if (!ieds.length) {
+    selIed.innerHTML = '<option value="">Sin IED registradas</option>';
+    selIed.disabled  = true;
+  } else {
+    const d = document.createElement('option');
+    d.value = ''; d.textContent = 'Todas las IED';
+    selIed.appendChild(d);
+    ieds.forEach(function(n) {
+      const o = document.createElement('option');
+      o.value = n; o.textContent = n;
+      selIed.appendChild(o);
+    });
+    selIed.disabled = false;
+  }
+  actualizarChips();
+});
+
+// ── IED ──
+selIed.addEventListener('change', function() {
+  if (this.value) mostrarFichaIED(this.value, selLoc.value);
+  else ocultarFichaIED();
+  actualizarChips();
+});
+
+// ── Chips remove ──
+chipLocRm.addEventListener('click', function() {
+  selLoc.value = '';
+  selIed.innerHTML = '<option value="">Selecciona una localidad</option>';
+  selIed.disabled  = true;
+  ocultarFichaIED(); actualizarChips();
+});
+chipIedRm.addEventListener('click', function() {
+  selIed.value = ''; ocultarFichaIED(); actualizarChips();
+});
+clearAllBtn.addEventListener('click', function() {
+  selLoc.value = '';
+  selIed.innerHTML = '<option value="">Selecciona una localidad</option>';
+  selIed.disabled  = true;
+  searchInput.value = ''; searchClear.classList.remove('visible');
+  cerrarDropdown(); ocultarFichaIED(); actualizarChips();
+});
+
+// ── Buscador ──
+const todasIED = [];
+Object.entries(IED_POR_LOCALIDAD).forEach(function([locId, ieds]) {
+  ieds.forEach(function(nombre) {
+    todasIED.push({ nombre, localidad: LOC_NOMBRES[locId], locId });
+  });
+});
+
+function mostrarDropdown(res) {
+  dropdown.innerHTML = '';
+  if (!res.length) {
+    dropdown.innerHTML = '<li class="dd-empty">Sin resultados</li>';
+  } else {
+    res.forEach(function(item) {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="dd-name">${item.nombre}</span><span class="dd-loc">${item.localidad}</span>`;
+      li.addEventListener('click', function() {
+        selLoc.value = item.locId;
+        selLoc.dispatchEvent(new Event('change'));
+        setTimeout(function() {
+          selIed.value = item.nombre;
+          selIed.dispatchEvent(new Event('change'));
+        }, 50);
+        searchInput.value = item.nombre;
+        cerrarDropdown();
+      });
+      dropdown.appendChild(li);
+    });
+  }
+  dropdown.style.display = 'block';
+}
+function cerrarDropdown() { dropdown.style.display = 'none'; }
+
+searchInput.addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  searchClear.classList.toggle('visible', this.value.length > 0);
+  if (q.length < 2) { cerrarDropdown(); return; }
+  mostrarDropdown(todasIED.filter(i => i.nombre.toLowerCase().includes(q)));
+});
+searchClear.addEventListener('click', function() {
+  searchInput.value = ''; searchClear.classList.remove('visible');
+  cerrarDropdown(); searchInput.focus();
+});
+document.addEventListener('click', function(e) {
+  if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) cerrarDropdown();
+});
+
+</script>
+</body>
+</html>
